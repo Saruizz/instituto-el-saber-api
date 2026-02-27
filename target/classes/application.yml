@@ -1,0 +1,106 @@
+# =============================================
+# CONFIGURACIÓN BASE — SABER-SIS API
+# =============================================
+spring:
+  application:
+    name: instituto-el-saber-api
+  config:
+    import: optional:file:.env[.properties]
+  profiles:
+    active: dev
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    default-model-expand-depth: 1
+  default-flat-param-object: true
+  api-docs:
+    path: /v3/api-docs
+
+---
+# =============================================
+# PERFIL DE DESARROLLO
+# =============================================
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/instituto_el_saber_db}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    repair-on-migrate: true # Dev only: repara checksums si un script fue modificado
+
+# JWT
+jwt:
+  secret: ${JWT_SECRET:c2FiZXItc2lzLWluc3RpdHV0by1lbC1zYWJlci1zYW50YS1tYXJ0YS0yMDI1LXNlY3JldC1rZXktbXV5LWxhcmdhLXktc2VndXJh}
+  expiration: ${JWT_EXPIRATION:900000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+
+logging:
+  level:
+    com.institutosaber: DEBUG
+    org.springframework.security: INFO
+    org.flywaydb: INFO
+
+---
+# =============================================
+# PERFIL DE PRODUCCIÓN
+# =============================================
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:900000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+
+logging:
+  level:
+    com.institutosaber: INFO
+    org.springframework.security: WARN
