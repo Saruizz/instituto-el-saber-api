@@ -1,6 +1,5 @@
 package com.institutosaber.api.exception;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.institutosaber.api.shared.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
